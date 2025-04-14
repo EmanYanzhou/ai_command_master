@@ -1,0 +1,19 @@
+[project]
+name = "ai-command-master-test"
+version = "1.0.0"
+description = "ai command master example"
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.1",
+    "openai>=1.7.3"
+]
+
+[project.scripts]
+ai = "ai_command_master:cli"
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "ai_command_master"

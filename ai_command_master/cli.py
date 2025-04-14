@@ -1,12 +1,14 @@
 import click
 
-import .core
+from . import core
 
 # 1. 定义主命令组 'ai'
 # invoke_without_command=True 允许在没有指定子命令时执行 cli 函数本身
 @click.group(invoke_without_command=True, context_settings=dict(help_option_names=['-h', '--help']))
-@click.argument('description_or_command', nargs=-1) # 捕获所有未被识别为选项的参数
-@click.pass_context # 允许访问上下文信息，比如是否调用了子命令
+# 捕获所有未被识别为选项的参数
+@click.argument('description_or_command', nargs=-1)
+# 允许访问上下文信息，比如是否调用了子命令
+@click.pass_context
 def cli(ctx, description_or_command):
     """
     ai-command-master: 通过自然语言生成并执行终端命令。
@@ -29,6 +31,7 @@ def cli(ctx, description_or_command):
             click.echo(ctx.get_help())
             ctx.exit()
 
+
 # 2. 定义 'ask' 子命令
 @cli.command()
 @click.argument('description', nargs=-1, required=True) # nargs=-1 允许多个词作为描述
@@ -37,3 +40,9 @@ def ask(description):
     full_description = ' '.join(description)
     # 调用核心处理函数
     core.handle_ask_request(full_description)
+
+
+# 3. 定义 'config' 命令组
+
+
+# 4. 定义 'log' 命令
