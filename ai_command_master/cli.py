@@ -1,4 +1,7 @@
 import click
+import subprocess
+import os
+import pyperclip
 
 from . import core
 
@@ -34,13 +37,19 @@ def cli(ctx, description_or_command):
 
 # 2. 定义 'ask' 子命令
 @cli.command()
-@click.argument('description', nargs=-1, required=True) # nargs=-1 允许多个词作为描述
+@click.argument('description', nargs=-1, required=True)
 def ask(description):
     """(默认) 根据自然语言描述生成命令。"""
     full_description = ' '.join(description)
-    # 调用核心处理函数
-    core.handle_ask_request(full_description)
-
+    resp_command = core.start_request(full_description)
+    
+    # 直接复制命令到剪贴板并提示用户
+    try:
+        pyperclip.copy(resp_command[0])
+        click.echo(f"{resp_command[1]}: {resp_command[0]}")
+        click.echo("【命令已复制到剪贴板，右键鼠标粘贴】")
+    except Exception as e:
+        click.echo(f"复制命令时出错: {str(e)}", err=True)
 
 # 3. 定义 'config' 命令组
 

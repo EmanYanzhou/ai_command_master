@@ -5,7 +5,9 @@ description = "ai command master example"
 requires-python = ">=3.8"
 dependencies = [
     "click>=8.1",
-    "openai>=1.7.3"
+    "openai>=1.7.3",
+    "PyYAML>=6.0.2",
+    "pyperclip>=1.9.0"
 ]
 
 [project.scripts]

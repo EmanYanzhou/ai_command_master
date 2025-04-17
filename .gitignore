@@ -1,5 +1,14 @@
+# 集成开发环境配置文件
 .idea/
 
-# 忽略测试文件夹
+# 测试文件夹
 tests/
 
+# 配置文件
+ai_command_master/config/config.yaml
+
+# python 虚拟环境
+venv/
+
+# python 包文件
+ai_command_master/__pycache__/
