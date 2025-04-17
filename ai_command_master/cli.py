@@ -5,13 +5,12 @@ import pyperclip
 
 from . import core
 
-# 1. 定义主命令组 'ai'
-# invoke_without_command=True 允许在没有指定子命令时执行 cli 函数本身
+# 主命令组 'ai'
+# 该命令组实现了一个CLI工具，可以将自然语言转换为终端命令
+# 支持直接执行命令或通过子命令执行特定功能
 @click.group(invoke_without_command=True, context_settings=dict(help_option_names=['-h', '--help']))
-# 捕获所有未被识别为选项的参数
-@click.argument('description_or_command', nargs=-1)
-# 允许访问上下文信息，比如是否调用了子命令
-@click.pass_context
+@click.argument('description_or_command', nargs=-1)  # 接收任意数量的参数作为命令描述
+@click.pass_context  # 注入click上下文，用于访问命令运行时的状态信息
 def cli(ctx, description_or_command):
     """
     ai-command-master: 通过自然语言生成并执行终端命令。
@@ -21,37 +20,45 @@ def cli(ctx, description_or_command):
     """
     # 检查是否有子命令被调用
     if ctx.invoked_subcommand is None:
-        # 如果没有子命令被调用
         if description_or_command:
-            # 并且提供了参数，则认为这些参数是 'ask' 命令的描述
+            # 如果提供了参数但没有指定子命令，将参数作为ask命令的输入
             description = ' '.join(description_or_command)
+            # 调用ask命令处理自然语言描述
             ctx.invoke(ask, description=description_or_command)
-            # click.echo(f"默认行为: 执行 'ask' 命令...") # 也可以这样调用
-            # 直接调用 ask 命令的处理逻辑 (或者其背后的核心函数)
-            # core.handle_ask_request(description)
         else:
-            # 如果没有子命令，也没有提供参数，则显示帮助信息
+            # 没有参数也没有子命令时，显示帮助信息
             click.echo(ctx.get_help())
             ctx.exit()
 
 
-# 2. 定义 'ask' 子命令
+# ask子命令：将自然语言描述转换为终端命令
 @cli.command()
-@click.argument('description', nargs=-1, required=True)
+@click.argument('description', nargs=-1, required=True)  # 必须提供至少一个参数作为命令描述
 def ask(description):
-    """(默认) 根据自然语言描述生成命令。"""
+    """
+    (默认) 根据自然语言描述生成命令。
+    
+    参数:
+        description: 自然语言描述的命令需求，支持多个参数，将被合并为一个描述字符串
+    
+    示例:
+        ai ask list all python files
+        ai ask create a new directory named test
+    """
+    # 合并多个参数为一个完整的描述
     full_description = ' '.join(description)
+    # 调用核心处理函数生成命令
     resp_command = core.start_request(full_description)
     
-    # 直接复制命令到剪贴板并提示用户
+    # 将生成的命令复制到剪贴板并显示给用户
     try:
-        pyperclip.copy(resp_command[0])
-        click.echo(f"{resp_command[1]}: {resp_command[0]}")
+        pyperclip.copy(resp_command[0])  # resp_command[0]为生成的命令
+        click.echo(f"{resp_command[1]}: {resp_command[0]}")  # resp_command[1]为命令说明
         click.echo("【命令已复制到剪贴板，右键鼠标粘贴】")
     except Exception as e:
         click.echo(f"复制命令时出错: {str(e)}", err=True)
 
-# 3. 定义 'config' 命令组
+# 3. 定义 'config' 命令组 - TODO: 实现配置管理功能
 
 
-# 4. 定义 'log' 命令
+# 4. 定义 'log' 命令 - TODO: 实现日志查看功能

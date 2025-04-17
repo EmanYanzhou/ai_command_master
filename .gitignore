@@ -10,5 +10,32 @@ ai_command_master/config/config.yaml
 # python 虚拟环境
 venv/
 
-# python 包文件
-ai_command_master/__pycache__/
+# Python相关忽略项
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 系统相关文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
