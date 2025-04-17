@@ -1,5 +1,5 @@
 [project]
-name = "ai-command-master-test"
+name = "ai-command-master"
 version = "1.0.0"
 description = "ai command master example"
 requires-python = ">=3.8"
