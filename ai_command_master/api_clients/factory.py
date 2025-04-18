@@ -23,7 +23,7 @@ class APIClientFactory:
         Returns:
             BaseAPIClient: API客户端实例
         """
-        provider = provider.lower()
+        provider = provider.lower()    # 转小写找对应模型提供商
         if provider not in cls._providers:
             raise ValueError(f"不支持的服务商: {provider}")
             
