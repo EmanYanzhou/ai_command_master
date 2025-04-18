@@ -8,9 +8,6 @@ from .api_clients.factory import APIClientFactory
 
 
 # 相关参数
-user_message: str = ""                              # 用户输入
-config_args: dict = {}                              # 配置参数
-system_args: dict = {}                              # 系统信息
 config_instance: ConfigManager = ConfigManager()    # 单例模式: 配置文件管理对象
 
 
@@ -27,11 +24,7 @@ def load_system_info() -> dict:
 
 
 # 准备消息
-def prepare_message() -> list:
-    # 引入全局变量
-    # global user_message
-    # global config_args
-    # global system_args
+def prepare_message(user_message: str, config_args: dict, system_args: dict) -> list:
     messages: list = []
 
     # 提示词
@@ -49,48 +42,44 @@ def prepare_message() -> list:
     """
     user_content: str = f"{user_message}"
 
-    messages[0]: dict = {
+    messages.append({
         "role": "system",
         "content": f"{system_content}"
-    }
-    messages[1]: dict = {
+    })
+    messages.append({
         "role": "user",
         "content": f"{user_content}"
-    }
+    })
 
     return messages
 
 
 # 调用合适的接口
-def call_api(messages: list) -> str:
+def call_api(config_args: dict, messages: list) -> str:
     provider = config_args['model_provider']
     client = APIClientFactory.get_api_client(provider, config_args)
     response = client.chat_completion(messages)
-    client.close()  # 清理资源
+    client.close()
     return response
 
 
 # 核心处理逻辑
 def start_request(full_description: str) -> list:
 
-    global user_message
-    global config_args
-    global system_args
-
     # 1. 获取用户输入
-    user_message: str = full_description
+    user_message: str = full_description    # 用户输入
     
     # 2. 加载配置
-    config_args: dict = load_config()
+    config_args: dict = load_config()    # 配置参数
 
     # 3. 加载系统信息
-    system_args: dict = load_system_info()
+    system_args: dict = load_system_info()    # 系统信息
     
     # 3. 准备消息
-    messages: list = prepare_message()
+    messages: list = prepare_message(user_message, config_args, system_args)
     
     # 4. 调用API获取结果
-    response = call_api(messages)
+    response = call_api(config_args, messages)
     
     # 5. 处理响应
     return [response, config_args['model']]
@@ -99,6 +88,4 @@ def start_request(full_description: str) -> list:
 
 
 if __name__ == '__main__':
-    load_config()
-    print('配置加载完成')
-    print(config_args)
+    pass

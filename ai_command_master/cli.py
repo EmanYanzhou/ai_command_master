@@ -22,9 +22,9 @@ def cli(ctx, description_or_command):   # ctx是Click的上下文对象,类型�
         if description_or_command:
             # 如果提供了参数但没有指定子命令,将参数作为ask命令的输入.
             # 合并多个参数为一个完整的描述
-            full_description = ' '.join(description_or_command)
+            full_description: str = ' '.join(description_or_command)
             # 调用ask命令处理自然语言描述;invoke是上下文对象的一个方法,作用是显示调用命令
-            ctx.invoke(ask, description=full_description)
+            ctx.invoke(ask, full_description=full_description)
         else:
             # 没有参数也没有子命令时，显示帮助信息
             click.echo(ctx.get_help())
@@ -33,7 +33,7 @@ def cli(ctx, description_or_command):   # ctx是Click的上下文对象,类型�
 
 # ask子命令：将自然语言描述转换为终端命令
 @cli.command()
-@click.argument('description', nargs=-1, required=True)  # 必须提供至少一个参数作为命令描述
+@click.argument('full_description', nargs=-1, required=True)  # 必须提供至少一个参数作为命令描述
 def ask(full_description: str):
 
     """
