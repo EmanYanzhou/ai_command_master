@@ -1,7 +1,6 @@
 import click
-import pyperclip
 
-from . import core
+from ai_command_master import core
 
 # 定义主命令组 'ai'
 # 该命令组实现了一个CLI工具，是aicmd的核心功能
@@ -47,15 +46,16 @@ def ask(full_description: str):
     """
 
     # 调用核心处理函数生成命令
-    resp_command = core.start_request(full_description)
+    # resp_command =
+    core.start_request(full_description)
     
     # 将生成的命令复制到剪贴板并显示给用户
-    try:
-        pyperclip.copy(resp_command[0])  # resp_command[0]为生成的命令
-        click.echo(f"{resp_command[1]}: {resp_command[0]}")  # resp_command[1]为命令说明
-        click.echo("【命令已复制到剪贴板，右键鼠标粘贴】")
-    except Exception as e:
-        click.echo(f"复制命令时出错: {str(e)}", err=True)
+    # try:
+    #     pyperclip.copy(resp_command[0])  # resp_command[0]为生成的命令
+    #     click.echo(f"{resp_command[1]}: {resp_command[0]}")  # resp_command[1]为命令说明
+    #     click.echo("【命令已复制到剪贴板，右键鼠标粘贴】")
+    # except Exception as e:
+    #     click.echo(f"复制命令时出错: {str(e)}", err=True)
 
 # 3. 定义 'config' 命令组 - TODO: 实现配置管理功能
 

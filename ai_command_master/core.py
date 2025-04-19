@@ -1,9 +1,10 @@
 """核心逻辑
     处理用户输入、加载配置、调用API、确认、执行等等操作
 """
-
-from .config import ConfigManager
+from .execution import Execution
 from .system import SystemInfo
+from .config import ConfigManager
+from .data_formatter import DataFormatter
 from .api_clients.factory import APIClientFactory
 
 
@@ -63,29 +64,56 @@ def call_api(config_args: dict, messages: list) -> str:
     return response
 
 
+# 格式化返回结果
+def format_response(response: str) -> dict:
+    # 创建 DataFormatter 类的对象
+    response_formatter = DataFormatter(response)
+    response_dict = response_formatter.parse()
+
+    return response_dict
+
+
+# 安全执行
+def saft_execution(model: str, response_dict: dict):
+    # 创建 Execution 类对象
+    # exe =
+    # print("开始执行")
+    # print(model)
+    # print(response_dict)
+    exe = Execution(model, response_dict)
+    exe.execute()
+
+
 # 核心处理逻辑
-def start_request(full_description: str) -> list:
+def start_request(full_description: str):
 
     # 1. 获取用户输入
     user_message: str = full_description    # 用户输入
+    # print(f"User message: {user_message}")
     
     # 2. 加载配置
     config_args: dict = load_config()    # 配置参数
-
+    # print(f"Config args: {config_args}")
+    
     # 3. 加载系统信息
     system_args: dict = load_system_info()    # 系统信息
+    # print(f"System args: {system_args}")
     
     # 3. 准备消息
     messages: list = prepare_message(user_message, config_args, system_args)
+    # print(f"Prepared messages: {messages}")
     
     # 4. 调用API获取结果
-    response = call_api(config_args, messages)
-    
-    # 5. 处理响应
-    return [response, config_args['model']]
+    response: str = call_api(config_args, messages)
+    # print(f"API response: {response}")
 
+    # 5. 格式化返回结果
+    response_dict: dict = format_response(response)
+    # print(f"Formatted response: {response_dict}")
 
+    # 6. 安全执行
+    saft_execution(config_args['model'], response_dict)
 
 
 if __name__ == '__main__':
-    pass
+    start_request("怎么查看网络配置")
