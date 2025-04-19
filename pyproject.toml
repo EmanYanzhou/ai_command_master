@@ -1,6 +1,6 @@
 [project]
 name = "ai_command_master"
-version = "1.0.0"
+version = "1.0.1"
 description = "ai command master example"
 requires-python = ">=3.8"
 dependencies = [

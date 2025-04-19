@@ -20,17 +20,17 @@ class Execution:
     def execute_command(self):
         """Command 模式"""
         pyperclip.copy(self.response_dict['content'])
-        click.echo(f"{self.model}: ")
-        click.echo(f"可能执行的命令为[ {self.response_dict['content']} ]")
-        click.echo(f"Warning: {self.response_dict['warning']}")
+        click.echo(f">>>{self.model}: ")
+        click.echo(f">>>可能执行的命令为[ {self.response_dict['content']} ]")
+        click.echo(f">>>Warning: {self.response_dict['warning']}")
         if not self.response_dict['tip'] is None:
-            click.echo(f"Tip: {self.response_dict['tip']}")
+            click.echo(f">>>Tip: {self.response_dict['tip']}")
         click.echo("[ 命令已复制到剪贴板，右键鼠标粘贴 ]")
 
     def execute_text(self):
         """Text 模式"""
-        click.echo(f"{self.model}: ")
-        click.echo(f"{self.response_dict['content']}")
-        click.echo(f"Warning: {self.response_dict['warning']}")
+        click.echo(f">>>{self.model}: ")
+        click.echo(f">>>{self.response_dict['content']}")
+        click.echo(f">>>Warning: {self.response_dict['warning']}")
         if not self.response_dict['tip'] is None:
-            click.echo(f"Tip: {self.response_dict['tip']}")
+            click.echo(f">>>Tip: {self.response_dict['tip']}")
