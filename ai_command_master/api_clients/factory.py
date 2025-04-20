@@ -2,6 +2,7 @@
 from typing import Dict, Any
 from .base import BaseAPIClient
 from .deepseek import DeepSeekClient
+from .moonshot import MoonShotClient
 
 class APIClientFactory:
     """API客户端工厂类"""
@@ -9,6 +10,8 @@ class APIClientFactory:
     # 支持的服务商映射
     _providers = {
         'deepseek': DeepSeekClient,
+        'moonshot': MoonShotClient,
+        # 其他服务商的实现类...
     }
     
     @classmethod
@@ -29,14 +32,3 @@ class APIClientFactory:
             
         client_class = cls._providers[provider]
         return client_class(config)
-
-
-    @classmethod
-    def chat_completion(messages: list):
-        client = APIClientFactory.get_api_client("deepseek", config_args)
-        response = client.chat_completion(messages)
-        client.close()  # 清理资源
-
-    
-    def chat_completion():
-        pass

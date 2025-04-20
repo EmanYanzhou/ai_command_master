@@ -1,5 +1,10 @@
-"""核心逻辑
-    处理用户输入、加载配置、调用API、确认、执行等等操作
+"""核心逻辑模块
+该模块负责处理整个应用程序的核心流程，包括：
+- 用户输入处理
+- 配置文件管理
+- API调用
+- 命令执行
+- 系统信息收集
 """
 from .execution import Execution
 from .system import SystemInfo
@@ -8,55 +13,78 @@ from .data_formatter import DataFormatter
 from .api_clients.factory import APIClientFactory
 
 
-# 相关参数
-config_instance: ConfigManager = ConfigManager()    # 单例模式: 配置文件管理对象
+# 全局配置管理器实例（单例模式）
+config_instance: ConfigManager = ConfigManager()
 
 
-# 2.调用 config.py 加载配置
 def load_config() -> dict:
+    """加载应用程序配置
+    
+    Returns:
+        dict: 包含所有配置项的字典
+    """
     config = config_instance.load_config()
     return config
 
 
-# 加载系统信息
 def load_system_info() -> dict:
-    system_info = SystemInfo()    # 创建SystemInfo实例
-    return system_info.get_system_info()    # 返回字典
-
-
-# 准备消息
-def prepare_message(user_message: str, config_args: dict, system_args: dict) -> list:
-    messages: list = []
-
-    # 提示词
-    prompt: str = config_args['prompt']['base']
-
-    system_content: str = f"""
-    {prompt}
-    --------------提示词分割线---------------
-    系统信息:
-    系统:{system_args['系统']};
-    系统版本:{system_args['系统版本']};
-    用户名:{system_args['用户名']};
-    用户家目录:{system_args['用户家目录']};
-    当前工作目录:{system_args['当前工作目录']};
+    """收集当前系统环境信息
+    
+    Returns:
+        dict: 包含系统信息的字典，包括操作系统类型、版本、用户信息等
     """
-    user_content: str = f"{user_message}"
+    system_info = SystemInfo()
+    return system_info.get_system_info()
+
+
+def prepare_message(user_message: str, config_args: dict, system_args: dict) -> list:
+    """准备发送给AI模型的消息
+    
+    Args:
+        user_message (str): 用户输入的原始消息
+        config_args (dict): 应用程序配置参数
+        system_args (dict): 系统环境信息
+    
+    Returns:
+        list: 格式化后的消息列表，包含system和user角色的消息
+    """
+    messages: list = []
+    
+    prompt: str = config_args['prompt']['base']
+    
+    system_info = {
+        "prompt": prompt,
+        "system_info": {
+            "os": system_args['系统'],
+            "os_version": system_args['系统版本'],
+            "username": system_args['用户名'],
+            "home_dir": system_args['用户家目录'],
+            "current_dir": system_args['当前工作目录']
+        }
+    }
 
     messages.append({
         "role": "system",
-        "content": f"{system_content}"
+        "content": str(system_info)
     })
     messages.append({
         "role": "user",
-        "content": f"{user_content}"
+        "content": user_message
     })
 
     return messages
 
 
-# 调用合适的接口
 def call_api(config_args: dict, messages: list) -> str:
+    """调用AI模型API
+    
+    Args:
+        config_args (dict): 包含API配置的字典
+        messages (list): 待发送的消息列表
+    
+    Returns:
+        str: AI模型的原始响应文本
+    """
     provider = config_args['model_provider']
     client = APIClientFactory.get_api_client(provider, config_args)
     response = client.chat_completion(messages)
@@ -64,54 +92,71 @@ def call_api(config_args: dict, messages: list) -> str:
     return response
 
 
-# 格式化返回结果
 def format_response(response: str) -> dict:
-    # 创建 DataFormatter 类的对象
+    """解析和格式化AI模型的响应
+    
+    Args:
+        response (str): AI模型的原始响应文本
+    
+    Returns:
+        dict: 解析后的结构化响应数据
+    """
     response_formatter = DataFormatter(response)
     response_dict = response_formatter.parse()
-
     return response_dict
 
 
-# 安全执行
 def saft_execution(model: str, response_dict: dict):
-    # 创建 Execution 类对象
-    # exe =
-    # print("开始执行")
-    # print(model)
-    # print(response_dict)
+    """安全地执行AI模型生成的命令
+    
+    Args:
+        model (str): 使用的AI模型标识符
+        response_dict (dict): 解析后的AI响应数据
+    """
     exe = Execution(model, response_dict)
     exe.execute()
 
 
-# 核心处理逻辑
 def start_request(full_description: str):
-
+    """处理用户请求的主流程
+    
+    整个处理流程包括：
+    1. 接收用户输入
+    2. 加载配置
+    3. 收集系统信息
+    4. 准备AI消息
+    5. 调用AI接口
+    6. 解析响应
+    7. 执行命令
+    
+    Args:
+        full_description (str): 用户的完整输入描述
+    """
     # 1. 获取用户输入
-    user_message: str = full_description    # 用户输入
-    # print(f"User message: {user_message}")
+    user_message: str = full_description
+    print(f"User message: {user_message}\n")
     
     # 2. 加载配置
-    config_args: dict = load_config()    # 配置参数
-    # print(f"Config args: {config_args}")
+    config_args: dict = load_config()
+    print(f"Config args: {config_args}\n")
     
-    # 3. 加载系统信息
-    system_args: dict = load_system_info()    # 系统信息
-    # print(f"System args: {system_args}")
+    # 3. 收集系统信息
+    system_args: dict = load_system_info()
+    print(f"System args: {system_args}\n")
     
-    # 3. 准备消息
+    # 4. 准备消息
     messages: list = prepare_message(user_message, config_args, system_args)
-    # print(f"Prepared messages: {messages}")
+    print(f"Prepared messages: {messages}\n")
     
-    # 4. 调用API获取结果
+    # 5. 调用API获取结果
     response: str = call_api(config_args, messages)
-    # print(f"API response: {response}")
+    print(f"API response: {response}\n")
 
-    # 5. 格式化返回结果
+    # 6. 格式化返回结果
     response_dict: dict = format_response(response)
-    # print(f"Formatted response: {response_dict}")
+    print(f"Formatted response: {response_dict}\n")
 
-    # 6. 安全执行
+    # 7. 安全执行
     saft_execution(config_args['model'], response_dict)
 
 
