@@ -57,13 +57,48 @@ class ConfigManager:
             return {}    # 返回空字典
 
 
-    # 保存配置文件 - TODO：计划实现保存配置功能
-    # def save_config(self, config: Dict[str, Any]) -> None:
-    #     """保存配置到用户配置文件。
-    #
-    #     Args:
-    #         config (Dict[str, Any]): 要保存的配置数据字典
-    #     """
-    #     # 保存配置到用户配置文件
-    #     with open(self.user_config, 'w', encoding='utf-8') as f:
-    #         yaml.dump(config, f, allow_unicode=True)
+    # 列出配置文件
+    def list_config(self):
+        config_path: str = self.config_dir
+        config_files: list = os.listdir(config_path)
+        i: int = 1
+        print("=== 配置文件 ===")
+        for file in config_files:
+            if file.endswith('.yaml'):
+                print(f"{i}. {file}")
+                i += 1
+
+
+    # 修改配置文件
+    def set_config(self) -> None:
+        """交互式修改配置
+        允许用户逐行查看配置项，并可以选择性地修改值
+        按回车跳过当前配置项，输入新值则更新配置
+        """
+        # 加载当前配置
+        current_config = self.load_config()
+        
+        # 定义要显示的配置项
+        display_keys = ['model_provider', 'model', 'base_url', 'api_key', 'max_token', 'temperature']
+        
+        print("=== 当前配置项 ===")
+        print("(直接回车跳过，输入新值进行修改)")
+        
+        # 逐行显示并允许修改
+        for key in display_keys:
+            if key in current_config:
+                current_value = current_config[key]
+                print(f"\n当前 {key}: {current_value}")
+                new_value = input(f"新的 {key} (回车跳过): ").strip()
+                
+                # 如果用户输入了新值，则更新配置
+                if new_value:
+                    current_config[key] = new_value
+        
+        # 保存修改后的配置到用户配置文件
+        try:
+            with open(self.user_config, 'w', encoding='utf-8') as f:
+                yaml.safe_dump(current_config, f, allow_unicode=True)
+            print("\n配置已更新并保存")
+        except Exception as e:
+            print(f"\n保存配置时出错: {e}")

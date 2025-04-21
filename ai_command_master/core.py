@@ -17,6 +17,14 @@ from .api_clients.factory import APIClientFactory
 config_instance: ConfigManager = ConfigManager()
 
 
+def list_config():
+    config_instance.list_config()
+
+
+def set_config():
+    config_instance.set_config()
+
+
 def load_config() -> dict:
     """加载应用程序配置
     
@@ -134,27 +142,27 @@ def start_request(full_description: str):
     """
     # 1. 获取用户输入
     user_message: str = full_description
-    print(f"User message: {user_message}\n")
+    # print(f"User message: {user_message}\n")
     
     # 2. 加载配置
     config_args: dict = load_config()
-    print(f"Config args: {config_args}\n")
+    # print(f"Config args: {config_args}\n")
     
     # 3. 收集系统信息
     system_args: dict = load_system_info()
-    print(f"System args: {system_args}\n")
+    # print(f"System args: {system_args}\n")
     
     # 4. 准备消息
     messages: list = prepare_message(user_message, config_args, system_args)
-    print(f"Prepared messages: {messages}\n")
+    # print(f"Prepared messages: {messages}\n")
     
     # 5. 调用API获取结果
     response: str = call_api(config_args, messages)
-    print(f"API response: {response}\n")
+    # print(f"API response: {response}\n")
 
     # 6. 格式化返回结果
     response_dict: dict = format_response(response)
-    print(f"Formatted response: {response_dict}\n")
+    # print(f"Formatted response: {response_dict}\n")
 
     # 7. 安全执行
     saft_execution(config_args['model'], response_dict)

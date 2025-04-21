@@ -4,9 +4,6 @@
 # 测试文件夹
 tests/
 
-# 配置文件
-ai_command_master/config/config.yaml
-
 # python 虚拟环境
 venv/
 
