@@ -6,6 +6,7 @@ tests/
 
 # python 虚拟环境
 venv/
+start_env.bat
 
 # Python相关忽略项
 __pycache__/
@@ -29,6 +30,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.pypirc
 
 # 系统相关文件
 .DS_Store

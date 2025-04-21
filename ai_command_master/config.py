@@ -93,6 +93,19 @@ class ConfigManager:
                 
                 # 如果用户输入了新值，则更新配置
                 if new_value:
+                    # 对特殊字段进行类型转换
+                    if key == 'max_token':
+                        try:
+                            new_value = int(new_value)
+                        except ValueError:
+                            print(f"错误：max_token 必须是整数，已保持原值")
+                            continue
+                    elif key == 'temperature':
+                        try:
+                            new_value = float(new_value)
+                        except ValueError:
+                            print(f"错误：temperature 必须是浮点数，已保持原值")
+                            continue
                     current_config[key] = new_value
         
         # 保存修改后的配置到用户配置文件
