@@ -29,8 +29,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+MANIFEST.in
 .pypirc
+.pytest_cache/
 
 # 系统相关文件
 .DS_Store
@@ -38,3 +39,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+
+# 配置文件
+ai_command_master/config/profiles/*

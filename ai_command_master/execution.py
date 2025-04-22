@@ -42,17 +42,17 @@ class Execution:
         """处理命令类型响应"""
         pyperclip.copy(self.response_dict['content'])
         click.echo(f"\n=== {self.model} ===")
-        click.echo(f"命令: {self.response_dict['content']}")
-        click.echo(f"警告: {self.response_dict['warning']}")
+        click.echo(f"Command: {self.response_dict['content']}")
+        click.echo(f"Warning: {self.response_dict['warning']}")
         if self.response_dict['tip']:
-            click.echo(f"提示: {self.response_dict['tip']}")
-        click.echo("\n[已复制到剪贴板 ✓]\n")
+            click.echo(f"Tip: {self.response_dict['tip']}")
+        click.echo("\n[ 已复制到剪贴板 ✓ ]\n")
 
     def execute_text(self):
         """处理文本类型响应"""
         click.echo(f"\n=== {self.model} ===")
-        click.echo(f"{self.response_dict['content']}")
-        click.echo(f"警告: {self.response_dict['warning']}")
+        click.echo(f"Content: {self.response_dict['content']}")
+        click.echo(f"Warning: {self.response_dict['warning']}")
         if self.response_dict['tip']:
-            click.echo(f"提示: {self.response_dict['tip']}")
+            click.echo(f"Tip: {self.response_dict['tip']}")
         click.echo()

@@ -27,15 +27,27 @@ def config_group():
     """配置管理功能"""
     pass
 
+@config_group.command(name="show")
+def show_config():
+    """显示当前配置"""
+    core.show_config()
+
 @config_group.command(name="list")
 def list_config():
-    """列出当前配置"""
-    core.list_config()
+    """列出全部配置"""
+    core.list_all_profiles()
 
-@config_group.command(name="set")
-def set_config():
-    """修改配置项"""
-    core.set_config()
+@config_group.command(name="switch")
+@click.argument('profile_name')
+def switch_config(profile_name):
+    """切换指定配置"""
+    core.switch_config(profile_name)
+
+@config_group.command(name="create")
+@click.argument('profile_name')
+def create_config(profile_name):
+    """新建配置文件"""
+    core.create_profile(profile_name)
 
 @cli.result_callback()
 def handle_default_command(result, **kwargs):

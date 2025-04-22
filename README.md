@@ -4,105 +4,109 @@
 
 ## 功能特点
 
-- 支持多种AI模型配置（如OpenAI、Deepseek等）
-- 智能命令解析和执行
-- 历史记录管理
-- 跨平台支持
-- 可配置的代理和超时设置
+- 支持多种AI模型配置（OpenAI、Deepseek、智谱AI等）
+- 智能命令解析和执行（自然语言转命令行）
+- 多配置文件管理（支持环境隔离）
+- 跨平台支持（Windows/macOS/Linux）
+
+## 典型场景
+
+- 快速查询复杂命令语法
+- 自动化重复性运维操作
+- 安全执行危险命令前确认
+- 开发环境快速配置
 
 ## 安装
 
 ### 环境要求
 
 - Python >= 3.8（建议3.13.0）
-- pip（Python包管理器）
+- pip 23.0+（Python包管理器）
+- Git 2.30+（源码安装需要）
 
 ### 安装步骤
 
+#### 方法一：通过pip安装（推荐）
+
+使用清华PyPI镜像加速安装：
+```bash
+pip install ai-command-master -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+#### 方法二：从源码安装
+
 1. 克隆项目代码：
 ```bash
-git clone https://github.com/yourusername/ai-command-master.git
+git clone https://gitee.com/yourusername/ai-command-master.git
 cd ai-command-master
 ```
 
-2. 安装依赖：
+2. 安装依赖（使用镜像源）：
 ```bash
-pip install .
-# 清华PyPI站网址：https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple .
 ```
 
-## 配置
+## 快速开始
 
-使用以下命令进行交互式配置：
+### 1. 创建配置文件
 
 ```bash
-ai config set
+# Windows系统需要以管理员模式运行CMD/PowerShell
+# myconfig为文件名，建议使用model名命名
+ai config create myconfig
 ```
 
-该命令将引导您配置以下参数：
-- model_provider：AI模型提供商
-- model：模型名称
-- base_url：API基础URL
-- api_key：API密钥
-- max_token：最大token数
-- temperature：温度参数
-
-您可以直接回车跳过不需要修改的配置项。所有配置将保存在用户配置文件中。
-
-## 使用方法
-
-安装完成后，可以通过`ai`命令来使用：
-
+### 2. 配置文件示例
 ```bash
-ai <your-command-or-question>
+# 请以官方提供的API文档为准
+model_provider = "Moonshot"
+model_name = "moonshot-v1-8k"
+base_url = "https://api.moonshot.cn/v1"
+api_key = "your_api_key"
+max_token: 8192
+temperature: 0.3
 ```
 
-### 示例
+### 3. 配置文件管理
 
 ```bash
-# 获取帮助信息
+# 列出所有配置文件
+ai config list
+
+# 显示当前配置
+ai config show
+
+# 切换配置文件
+ai config switch myconfig
+```
+
+## 使用指南
+
+### 基础使用
+```bash
+# 获取帮助
 ai --help
 
-# 执行命令
-ai 如何查看当前目录下的所有文件？
+# 执行命令（Windows路径示例）
+ai ask 如何批量重命名当前目录下所有.txt文件为.md文件？
 ```
 
 ## 开发说明
 
-### 项目结构
-
-```
-ai_command_master/
-├── api_clients/            # AI模型客户端
-├── config/                 # 配置文件
-├── __init__.py             # 包初始化
-├── cli.py                  # 命令行接口
-├── core.py                 # 核心功能
-├── execution.py            # 命令执行
-└── utils.py                # 工具函数
-```
-
-### 开发环境设置
+### 环境配置（Windows）
 
 1. 创建虚拟环境：
-```bash
+```powershell
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate    # Windows
+venv\Scripts\activate
 ```
 
-2. 安装开发依赖：
+2. 安装包：
 ```bash
-pip install -e .
+# 使用.virtualenv文件安装所有依赖
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple e .
+
 ```
-
-## 贡献指南
-
-1. Fork 项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
 
 ## 许可证
 

@@ -6,6 +6,8 @@
 - 命令执行
 - 系统信息收集
 """
+from turtle import config_dict
+
 from .execution import Execution
 from .system import SystemInfo
 from .config import ConfigManager
@@ -16,13 +18,43 @@ from .api_clients.factory import APIClientFactory
 # 全局配置管理器实例（单例模式）
 config_instance: ConfigManager = ConfigManager()
 
+# 显示当前配置
+def show_config():
+    active_profile = config_instance.get_active_profile()
+    print(f"当前配置文件: {active_profile}")
 
-def list_config():
-    config_instance.list_config()
+# 列出所有配置文件
+def list_all_profiles():
+    config_profiles: list = config_instance.get_available_profiles()
+    print(f"所有配置文件: {config_profiles}")
 
+# 切换配置文件
+def switch_config(profile_name: str):
+    config_instance.switch_profile(profile_name)
 
-def set_config():
-    config_instance.set_config()
+# 新建配置文件
+def create_profile(profile_name: str):
+    # 初始化配置文件模板
+    config_content: dict = {
+        "model_provider":"",
+        "model":"",
+        "base_url":"",
+        "api_key":"",
+        "max_token":8192,
+        "temperature":0.3,
+    }
+
+    for key, value in config_content.items():
+        if key == "max_token":
+        # 将输入转换为整数
+            config_content[key] = int(input(f"请输入{key}的值: "))
+        elif key == "temperature":
+        # 将输入转换为浮点数
+            config_content[key] = float(input(f"请输入{key}的值: "))
+        else:
+            config_content[key] = input(f"请输入{key}的值: ")
+
+    config_instance.create_profile(profile_name, config_content)
 
 
 def load_config() -> dict:
