@@ -70,8 +70,8 @@ class ConfigManager:
                     # 释放锁
                     msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
         except Exception as e:
-            print(f"保存配置文件时出错: {str(e)}")
-
+            # print(f"保存配置文件时出错: {str(e)}")
+            pass
     def get_available_profiles(self) -> list:
         """获取所有可用的配置文件列表"""
         profiles: list = []
@@ -124,6 +124,11 @@ class ConfigManager:
 
     def load_config(self) -> Dict[str, Any]:
         """加载配置文件"""
+
+        # 如果用户配置文件目录为空，则创建用户配置文件目录
+        if not os.path.exists(self.user_config_dir):
+            os.makedirs(self.user_config_dir)
+
         try:
             # 首先加载默认配置
             with open(self.default_config, 'r', encoding='utf-8') as f:
