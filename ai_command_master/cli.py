@@ -49,6 +49,19 @@ def create_config(profile_name):
     """新建配置文件"""
     core.create_profile(profile_name)
 
+@config_group.command(name="update")
+@click.argument('profile_name')
+def update_config(profile_name):
+    """更新配置文件"""
+    core.update_profile(profile_name)
+
+
+@config_group.command(name="delete")
+@click.argument('profile_name')
+def delete_config(profile_name):
+    """删除配置文件"""
+    core.delete_profile(profile_name)
+
 @cli.result_callback()
 def handle_default_command(result, **kwargs):
     ctx = click.get_current_context()

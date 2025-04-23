@@ -78,6 +78,8 @@ ai config show
 
 # 切换配置文件
 ai config switch myconfig
+
+......
 ```
 
 ## 使用指南

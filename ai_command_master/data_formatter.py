@@ -6,7 +6,7 @@
 """
 
 import json
-from typing import Dict, Any
+from typing import Dict
 
 class DataFormatter:
     """数据格式化处理类

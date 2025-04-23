@@ -6,7 +6,6 @@
 - 命令执行
 - 系统信息收集
 """
-from turtle import config_dict
 
 from .execution import Execution
 from .system import SystemInfo
@@ -21,16 +20,27 @@ config_instance: ConfigManager = ConfigManager()
 # 显示当前配置
 def show_config():
     active_profile = config_instance.get_active_profile()
-    print(f"当前配置文件: {active_profile}")
+    print(f'AICli> 当前用户配置文件是 "{active_profile}" ，输入 "ai config switch <配置文件名>" 切换用户配置文件。')
 
 # 列出所有配置文件
 def list_all_profiles():
-    config_profiles: list = config_instance.get_available_profiles()
-    print(f"所有配置文件: {config_profiles}")
+    try:
+        config_profiles: list = config_instance.get_available_profiles()
+        if config_profiles:
+            print(f"AICli> 所有用户配置文件: ")
+            for profile in config_profiles:
+                print(f" - {profile}")
+            print(f'输入 "ai config switch <配置文件名>" 可切换配置文件。')
+        else:
+            print(f'AICli> 没有找到用户配置文件，输入 "ai config create <配置文件名>" 创建用户配置文件。')
+    except Exception as e:
+        print(f"Error: {e}")
 
 # 切换配置文件
 def switch_config(profile_name: str):
-    config_instance.switch_profile(profile_name)
+    is_success = config_instance.switch_profile(profile_name)
+    if not is_success:
+        print(f'AICli> 切换用户配置文件失败，请检查用户配置文件 {profile_name} 是否存在。')
 
 # 新建配置文件
 def create_profile(profile_name: str):
@@ -40,21 +50,52 @@ def create_profile(profile_name: str):
         "model":"",
         "base_url":"",
         "api_key":"",
-        "max_token":8192,
+        "max_token":2000,
         "temperature":0.3,
     }
 
-    for key, value in config_content.items():
-        if key == "max_token":
-        # 将输入转换为整数
-            config_content[key] = int(input(f"请输入{key}的值: "))
-        elif key == "temperature":
-        # 将输入转换为浮点数
-            config_content[key] = float(input(f"请输入{key}的值: "))
-        else:
-            config_content[key] = input(f"请输入{key}的值: ")
+    print(f'AICli> 用户配置文件命名建议直接使用模型名，用全小写字母，不同单词用下划线分隔，如 "deepseek_chat" 。')
 
-    config_instance.create_profile(profile_name, config_content)
+    try:
+        for key, value in config_content.items():
+            if key == "max_token":
+            # 将输入转换为整数
+                config_content[key] = int(input(f" - 请输入{key}的值（取值区间[1,8192]，默认2000）: "))
+            elif key == "temperature":
+            # 将输入转换为浮点数
+                config_content[key] = float(input(f" - 请输入{key}的值（取值区间[0,1]，默认0.3）: "))
+            else:
+                config_content[key] = input(f" - 请输入{key}的值: ")
+    except ValueError as e:
+        pass
+        # print('AICli> "max_token" 和 "temperature" 的值为数字。')
+
+    is_success = config_instance.create_profile(profile_name, config_content)
+    if not is_success:
+        print(f'AICli> 创建用户配置文件失败，请检查用户配置文件 {profile_name} 是否已存在。')
+    else:
+        print(f'AICli> 已自动切换到配置文件 "{profile_name}" ，可以通过 "ai config show" 查看当前配置文件。')
+
+
+def update_profile(profile_name: str):
+    is_success = config_instance.update_profile(profile_name)
+    if not is_success:
+        print(f'AICli> 更新用户配置文件失败，请检查用户配置文件 "{profile_name}" 是否存在。')
+    else:
+        print(f'AICli> 已更新并切换到用户配置文件 "{profile_name}" ，可以通过 "ai config show" 查看当前配置文件。')
+
+
+def delete_profile(profile_name: str):
+    """删除配置文件
+
+    Returns:
+        bool: 删除结果
+    """
+    is_success = config_instance.delete_profile(profile_name)
+    if not is_success:
+        print(f'AICli> 删除用户配置文件失败，请检查用户配置文件 "{profile_name}" 是否存在。')
+    else:
+        print(f'AICli> 已删除用户配置文件 "{profile_name}" ，可以通过 "ai config list" 查看所有配置文件。')
 
 
 def load_config() -> dict:
